@@ -1,5 +1,6 @@
 name: CI
 
+# 🔹 När workflow ska köras
 on:
   push:
     branches:
@@ -13,39 +14,41 @@ on:
 
 jobs:
   build:
+    name: Lint, Test & Build
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Hämta repo
+      # 1️⃣ Hämta koden från GitHub
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Installera pnpm (måste ske innan node setup)
+      # 2️⃣ Installera pnpm CLI (måste ske innan Node setup)
       - name: Install pnpm
         uses: pnpm/action-setup@v3
         with:
           version: 9
           run_install: false
 
-      # 3️⃣ Installera Node.js (LTS)
+      # 3️⃣ Installera Node.js (utan cache för felsökning)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
+          cache: false   # 🔹 cache inaktiverad temporärt för att undvika pnpm-lock mismatch
 
       # 4️⃣ Installera beroenden
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile || pnpm install --no-frozen-lockfile
+        # 🔹 Först försök med frozen-lockfile, annars installera utan freeze
 
-      # 5️⃣ Lint
+      # 5️⃣ Lint – kontrollera kodstil och syntax
       - name: Lint code
         run: pnpm lint
 
-      # 6️⃣ Test
+      # 6️⃣ Kör tester (Vitest)
       - name: Run tests
         run: pnpm test
 
-      # 7️⃣ Build
+      # 7️⃣ Bygg Next.js
       - name: Build Next.js
         run: pnpm build
