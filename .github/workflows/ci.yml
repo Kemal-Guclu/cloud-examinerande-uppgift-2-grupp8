@@ -1,56 +1,51 @@
 name: CI
 
-# 🕒 När workflow ska köras
 on:
   push:
     branches:
       - develop
+      - main
       - feature/*
-      - ci/*
   pull_request:
     branches:
       - develop
+      - main
 
 jobs:
   build:
-    name: Lint, Test & Build
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [20.x]   # Node.js LTS version
-
     steps:
-      # 1️⃣ Hämta projektet
-      - name: Checkout code
+      # 1️⃣ Hämta repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Installera Node.js och cacha pnpm-data
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
-
-      # 3️⃣ Installera pnpm (viktigt!)
+      # 2️⃣ Installera pnpm (måste ske innan node setup)
       - name: Install pnpm
         uses: pnpm/action-setup@v3
         with:
-          version: 9   # Senaste stabila version
+          version: 9
           run_install: false
+
+      # 3️⃣ Installera Node.js (LTS)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
 
       # 4️⃣ Installera beroenden
       - name: Install dependencies
         run: pnpm install
 
-      # 5️⃣ Lint – kontrollera kodstil
+      # 5️⃣ Lint
       - name: Lint code
         run: pnpm lint
 
-      # 6️⃣ Kör tester
+      # 6️⃣ Test
       - name: Run tests
         run: pnpm test
 
-      # 7️⃣ Bygg Next.js
+      # 7️⃣ Build
       - name: Build Next.js
         run: pnpm build
