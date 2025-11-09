@@ -41,7 +41,6 @@ export async function createEntry(entry: NewEntry): Promise<Entry> {
         user_id: user.id,
         title: entry.title,
         content: entry.content,
-        created_at: new Date().toISOString()
       }
     ])
     .select()
