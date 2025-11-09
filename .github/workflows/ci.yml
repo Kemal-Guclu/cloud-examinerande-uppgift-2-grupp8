@@ -51,6 +51,9 @@ jobs:
       # 7️⃣ Bygg Next.js
       - name: Build Next.js
         run: pnpm build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
       # 8️⃣ Visa Node och pnpm-version för felsäkerhet (valfritt)
       - name: Check Node & pnpm version
