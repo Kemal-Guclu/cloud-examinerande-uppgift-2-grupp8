@@ -11,7 +11,7 @@ RUN npm install -g pnpm
 COPY package.json pnpm-lock.yaml ./
 
 # Installera produktionsberoenden
-RUN pnpm install --prod
+RUN pnpm install
 
 # Kopiera resten av koden
 COPY . .
